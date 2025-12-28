@@ -80,6 +80,7 @@ export const login = async (req, res) => {
       email: user.email,
       fullName: user.fullName,
       profilePic: user.profilePic,
+      message: "Login Successfully.",
     });
   } catch (err) {
     console.error("Error in login controller", err);
