@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
@@ -14,6 +14,13 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
+    },
+
+    phoneNumber: {
+      type: Number,
+      required: true,
+      minlength: 10,
+      unique: true,
     },
 
     password: {

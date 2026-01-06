@@ -3,11 +3,11 @@ import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 
 export const signup = async (req, res) => {
-  const { fullName, email, password } = req.body;
+  const { fullName, email, password, phoneNumber } = req.body;
 
   try {
     // * check if all fields has been filled
-    if (!fullName || !email || !password) {
+    if (!fullName || !email || !password || !phoneNumber) {
       return res.staus(400).json({ message: "All Fields Need to Be Filled." });
     }
 
@@ -36,6 +36,7 @@ export const signup = async (req, res) => {
       email,
       fullName,
       password: hashedPassword,
+      phoneNumber,
     });
 
     if (newUser) {
