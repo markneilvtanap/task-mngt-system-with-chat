@@ -1,5 +1,6 @@
 import React, { use, useEffect } from "react";
 import { useTaskStore } from "../store/useTaskStore";
+import CreateTask from "../components/CreateTask";
 
 const HomePage = () => {
   const { fetchAllTasks, tasks, isTaskLoading } = useTaskStore();
@@ -27,6 +28,8 @@ const HomePage = () => {
           content
         </div>
       </div>
+
+      <CreateTask />
     </div>
   );
 };

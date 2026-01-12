@@ -19,6 +19,7 @@ export const createTask = async (req, res) => {
     const newTask = Task({
       title,
       description,
+      status,
       createdBy: req.user._id,
       assignedTo: assigned,
     });
@@ -29,6 +30,7 @@ export const createTask = async (req, res) => {
         title: newTask.title,
         description: newTask.description,
         assignedTo: newTask.assignedTo,
+        status: newTask.status,
         message: "Created New Task.",
       });
     }

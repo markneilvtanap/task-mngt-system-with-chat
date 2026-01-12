@@ -1,8 +1,11 @@
 import React from "react";
 import { useAuthStore } from "../store/useAuthStore";
+import { useTaskStore } from "../store/useTaskStore";
 
 const NavBar = () => {
   const { authUser, logout } = useAuthStore();
+
+  const { controlModal } = useTaskStore();
   return (
     <div className="navbar bg-base-100">
       <div className="navbar-start">
@@ -33,7 +36,9 @@ const NavBar = () => {
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-3 shadow"
             >
               <li>
-                <a className="p-3"> Create Task</a>
+                <a className="p-3" onClick={controlModal}>
+                  Create Task
+                </a>
               </li>
               <li>
                 <a className="p-3"> All Task</a>

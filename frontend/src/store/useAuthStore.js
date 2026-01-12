@@ -12,6 +12,7 @@ export const useAuthStore = create((set, get) => ({
   isCheckingAuth: true,
   isUpdatingProfile: false,
   onlineUsers: [],
+  AllUsers: [],
   socket: null,
   checkAuth: async () => {
     try {
@@ -82,6 +83,16 @@ export const useAuthStore = create((set, get) => ({
       toast.error(error.response.data.message);
     } finally {
       set({ isUpdatingProfile: false });
+    }
+  },
+
+  getAllUsers: async () => {
+    try {
+      const res = await axiosInstance.get("/auth/AllUsers");
+
+      set({ AllUsers: res.data.filteredUsers });
+    } catch (error) {
+      console.error("Error fetching all users:", error);
     }
   },
 
