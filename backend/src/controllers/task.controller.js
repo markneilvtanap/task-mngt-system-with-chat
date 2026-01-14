@@ -92,7 +92,9 @@ export const deleteTask = async (req, res) => {
 
 export const getAllTask = async (req, res) => {
   try {
-    const tasks = await Task.find({});
+    const tasks = await Task.find({
+      createdBy: req.user._id,
+    });
 
     if (tasks) {
       return res.status(200).json({ tasks });

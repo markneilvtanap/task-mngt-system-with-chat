@@ -5,7 +5,7 @@ import { useTaskStore } from "../store/useTaskStore";
 const NavBar = () => {
   const { authUser, logout } = useAuthStore();
 
-  const { controlModal } = useTaskStore();
+  const { controlModal, fetchSelfTasks } = useTaskStore();
   return (
     <div className="navbar bg-base-100">
       <div className="navbar-start">
@@ -45,7 +45,9 @@ const NavBar = () => {
               </li>
 
               <li>
-                <a className="p-3">Self Task</a>
+                <a className="p-3" onClick={fetchSelfTasks}>
+                  Self Task
+                </a>
               </li>
               <li>
                 <a className="p-3">My Assigned Task</a>

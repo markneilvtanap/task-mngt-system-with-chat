@@ -14,7 +14,7 @@ export const useTaskStore = create((set, get) => ({
     set({ isTaskLoading: true });
 
     try {
-      const res = await axiosInstance.get("/tasks/");
+      const res = await axiosInstance.get("/tasks");
       set({ tasks: res.data.tasks });
 
       console.log("Fetched tasks:", res.data.tasks);
@@ -26,9 +26,31 @@ export const useTaskStore = create((set, get) => ({
     }
   },
 
-  /* =========================
-     CREATE TASK
-  ========================= */
+  fetchSelfTasks: async () => {
+    set({ isTaskLoading: true });
+    try {
+      const res = await axiosInstance.get("/tasks/created-by-me");
+
+      set({ tasks: res.data.selfTask });
+      // set({tasks : res.data})
+    } catch (error) {
+      console.error("Error fetching self tasks:", error);
+      toast.error("Failed to load self tasks");
+    } finally {
+      set({ isTaskLoading: false });
+    }
+  },
+
+  fetchAssignedMeTasks: async () => {
+    try {
+    } catch (error) {}
+  },
+
+  fetchAssignedOthersfTasks: async () => {
+    try {
+    } catch (error) {}
+  },
+
   createTask: async (taskData) => {
     set({ isCreatingTask: true });
 
@@ -53,9 +75,6 @@ export const useTaskStore = create((set, get) => ({
     }
   },
 
-  /* =========================
-     MODAL CONTROL
-  ========================= */
   controlModal: () => {
     const modal = document.getElementById("my_modal_5");
     if (modal) {

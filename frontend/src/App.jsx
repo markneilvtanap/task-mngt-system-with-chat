@@ -24,7 +24,7 @@ const App = () => {
       </div>
     );
   return (
-    <div data-theme={theme}>
+    <div data-theme={theme} className="h-screen flex flex-col">
       <NavBar />
       <Routes>
         <Route
