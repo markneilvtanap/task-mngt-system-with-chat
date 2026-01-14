@@ -1,47 +1,92 @@
 import React from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useTaskStore } from "../store/useTaskStore";
+import { Menu } from "lucide-react";
 
 const NavBar = () => {
   const { authUser, logout } = useAuthStore();
 
-  const { controlModal, fetchSelfTasks } = useTaskStore();
+  const {
+    controlModal,
+    fetchSelfTasks,
+    fetchAssignedMeTasks,
+    fetchAssignedOthersfTasks,
+    fetchAllTasks,
+  } = useTaskStore();
   return (
     <div className="navbar bg-base-100">
       <div className="navbar-start">
         {authUser ? (
-          <div className="dropdown">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost btn-circle"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h7"
-                />
-              </svg>
-            </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-3 shadow"
-            >
+          // <div className="dropdown">
+          //   <div
+          //     tabIndex={0}
+          //     role="button"
+          //     className="btn btn-ghost btn-circle"
+          //   >
+          //     <svg
+          //       xmlns="http://www.w3.org/2000/svg"
+          //       className="h-5 w-5"
+          //       fill="none"
+          //       viewBox="0 0 24 24"
+          //       stroke="currentColor"
+          //     >
+          //       <path
+          //         strokeLinecap="round"
+          //         strokeLinejoin="round"
+          //         strokeWidth="2"
+          //         d="M4 6h16M4 12h16M4 18h7"
+          //       />
+          //     </svg>
+          //   </div>
+          //   <ul
+          //     tabIndex={0}
+          //     className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-3 shadow"
+          //   >
+          //     <li>
+          //       <a className="p-3" onClick={controlModal}>
+          //         Create Task
+          //       </a>
+          //     </li>
+          //     <li>
+          //       <a className="p-3" onClick={fetchAllTasks}>
+          //         {" "}
+          //         All Task
+          //       </a>
+          //     </li>
+
+          //     <li>
+          //       <a className="p-3" onClick={fetchSelfTasks}>
+          //         Self Task
+          //       </a>
+          //     </li>
+          //     <li>
+          //       <a className="p-3" onClick={fetchAssignedMeTasks}>
+          //         My Assigned Task
+          //       </a>
+          //     </li>
+          //     <li>
+          //       <a className="p-3" onClick={fetchAssignedOthersfTasks}>
+          //         Assigned Task To Others
+          //       </a>
+          //     </li>
+          //   </ul>
+          // </div>
+
+          <details className="dropdown">
+            <summary className="btn m-1">
+              <Menu />
+            </summary>
+            <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
               <li>
                 <a className="p-3" onClick={controlModal}>
                   Create Task
                 </a>
               </li>
               <li>
-                <a className="p-3"> All Task</a>
+                <a className="p-3" onClick={fetchAllTasks}>
+                  {" "}
+                  All Task
+                </a>
               </li>
 
               <li>
@@ -50,13 +95,17 @@ const NavBar = () => {
                 </a>
               </li>
               <li>
-                <a className="p-3">My Assigned Task</a>
+                <a className="p-3" onClick={fetchAssignedMeTasks}>
+                  My Assigned Task
+                </a>
               </li>
               <li>
-                <a className="p-3">Assigned Task To Others</a>
+                <a className="p-3" onClick={fetchAssignedOthersfTasks}>
+                  Assigned Task To Others
+                </a>
               </li>
             </ul>
-          </div>
+          </details>
         ) : null}
       </div>
       <div className="navbar-center">

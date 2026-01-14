@@ -4,7 +4,7 @@ const CountsTaskCards = () => {
   return (
     <div className="flex px-10 pt-5">
       <div className="card bg-base-300 rounded-box grid h-20 flex-grow place-items-center">
-        All Tasks Counts
+        All Tasks
       </div>
       <div className="divider divider-horizontal"></div>
       <div className="card bg-base-300 rounded-box grid h-20 flex-grow place-items-center">

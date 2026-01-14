@@ -1,12 +1,31 @@
 import { Trash2, Brush } from "lucide-react";
-
+import { useAuthStore } from "../store/useAuthStore";
+import { formatMessageTime } from "../lib/utils";
 const TaskCard = ({ task }) => {
+  const { allUsers } = useAuthStore();
+
+  const handleAssignName = (id) => {
+    let name = "Unknown User";
+    if (id === "me") return "Me";
+
+    Array.isArray(allUsers) &&
+      allUsers.map((user) => {
+        if (user._id === id) {
+          name = user.fullName;
+        }
+      });
+
+    return name;
+  };
+
   return (
     <div className="card bg-base-100  shadow-xl mx-5 my-3 ">
       <div className="card-header flex justify-between p-5">
-        <div className="card-title">{task.title}</div>
+        <div className="card-title">Title: {task.title}</div>
 
-        <div className="card-subtitle">Assigned to: {task.assignedTo}</div>
+        <div className="card-subtitle">
+          Assigned to: {handleAssignName(task.assignedTo)}
+        </div>
         <div className="card-actions">
           <button className="btn ">
             Status
@@ -23,10 +42,10 @@ const TaskCard = ({ task }) => {
       </div>
 
       <div className="card-body">
-        <p className="text-base-content/70">{task.description}</p>
+        <p className="text-base-content/95">Description: {task.description}</p>
 
         <p className="text-xs text-base-content/50 mt-4">
-          Created: {new Date(task.createdAt).toLocaleString()}
+          Created: {formatMessageTime(task.createdAt)}
         </p>
       </div>
     </div>

@@ -43,12 +43,32 @@ export const useTaskStore = create((set, get) => ({
 
   fetchAssignedMeTasks: async () => {
     try {
-    } catch (error) {}
+      set({ isTaskLoading: true });
+
+      const res = await axiosInstance.get("/tasks/assigned-to-me");
+
+      set({ tasks: res.data.myAssignedTask });
+    } catch (error) {
+      console.error("Error fetching Assiged to me tasks:", error);
+      toast.error("Failed to load Assiged to me tasks");
+    } finally {
+      set({ isTaskLoading: false });
+    }
   },
 
   fetchAssignedOthersfTasks: async () => {
     try {
-    } catch (error) {}
+      set({ isTaskLoading: true });
+
+      const res = await axiosInstance.get("/tasks/assigned-by-me");
+
+      set({ tasks: res.data.assignedToOthers });
+    } catch (error) {
+      console.error("Error fetching Assiged to me tasks:", error);
+      toast.error("Failed to load Assiged to me tasks");
+    } finally {
+      set({ isTaskLoading: false });
+    }
   },
 
   createTask: async (taskData) => {

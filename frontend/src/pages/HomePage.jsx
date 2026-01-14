@@ -15,13 +15,19 @@ const HomePage = () => {
     <div className="">
       <CountsTaskCards />
 
-      <div className="max-h-[550px] overflow-y-auto space-y-4 pr-2 mt-5">
-        {Array.isArray(tasks) && tasks.length > 0 ? (
-          tasks.map((task) => <TaskCard key={task._id} task={task} />)
-        ) : (
-          <p className="text-center mt-10">No tasks available.</p>
-        )}
-      </div>
+      {isTaskLoading ? (
+        <div className="flex justify-center items-center h-48">
+          <span className="loading loading-infinity loading-lg"></span>
+        </div>
+      ) : (
+        <div className="max-h-[550px] overflow-y-auto space-y-4 pr-2 mt-5">
+          {Array.isArray(tasks) && tasks.length > 0 ? (
+            tasks.map((task) => <TaskCard key={task._id} task={task} />)
+          ) : (
+            <p className="text-center mt-10">No tasks available.</p>
+          )}
+        </div>
+      )}
 
       <CreateTask />
     </div>
