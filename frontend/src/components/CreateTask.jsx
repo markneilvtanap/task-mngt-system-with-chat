@@ -5,11 +5,13 @@ import { useAuthStore } from "../store/useAuthStore";
 const CreateTask = () => {
   const { createTask, isCreatingTask } = useTaskStore();
 
-  const { getAllUsers, AllUsers } = useAuthStore();
+  const { getAllUsers, allUsers } = useAuthStore();
 
   useEffect(() => {
     getAllUsers();
   }, [getAllUsers]);
+
+  console.log("AllUsers in CreateTask:", allUsers);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -75,8 +77,8 @@ const CreateTask = () => {
           >
             <option value="me">Me</option>
 
-            {Array.isArray(AllUsers) &&
-              AllUsers.map((user) => (
+            {Array.isArray(allUsers) &&
+              allUsers.map((user) => (
                 <option key={user._id} value={user._id}>
                   {user.fullName}
                 </option>

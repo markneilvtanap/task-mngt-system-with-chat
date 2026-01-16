@@ -1,4 +1,4 @@
-import React, { use, useEffect } from "react";
+import { useEffect } from "react";
 import { useTaskStore } from "../store/useTaskStore";
 import CreateTask from "../components/CreateTask";
 import TaskCard from "../components/TaskCard";
@@ -9,7 +9,7 @@ const HomePage = () => {
 
   useEffect(() => {
     fetchAllTasks();
-  }, []);
+  }, [fetchAllTasks]);
 
   return (
     <div className="">

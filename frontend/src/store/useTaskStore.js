@@ -7,9 +7,6 @@ export const useTaskStore = create((set, get) => ({
   isTaskLoading: false,
   isCreatingTask: false,
 
-  /* =========================
-     FETCH ALL TASKS
-  ========================= */
   fetchAllTasks: async () => {
     set({ isTaskLoading: true });
 
@@ -72,19 +69,20 @@ export const useTaskStore = create((set, get) => ({
   },
 
   createTask: async (taskData) => {
+    const { tasks } = get();
     set({ isCreatingTask: true });
 
     try {
       const res = await axiosInstance.post("/tasks", taskData);
 
-      // Optimistic update
-      set((state) => ({
-        tasks: [res.data, ...state.tasks],
-      }));
+      console.log("Task created:", res.data);
+
+      set({
+        tasks: [...tasks, res.data],
+      });
 
       toast.success("Task created successfully");
 
-      // Close modal after success
       const modal = document.getElementById("my_modal_5");
       modal?.close();
     } catch (error) {
@@ -92,6 +90,23 @@ export const useTaskStore = create((set, get) => ({
       toast.error(error?.response?.data?.message || "Failed to create task");
     } finally {
       set({ isCreatingTask: false });
+    }
+  },
+
+  deleteTask: async (taskId) => {
+    set({ isTaskLoading: true });
+    try {
+      const res = await axiosInstance.delete(`tasks/${taskId}`);
+
+      set((state) => ({
+        tasks: state.tasks.filter((task) => task._id !== taskId),
+      }));
+      toast.success("Task deleted successfully");
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      toast.error(error?.response?.data?.message || "Failed to delete task");
+    } finally {
+      set({ isTaskLoading: false });
     }
   },
 

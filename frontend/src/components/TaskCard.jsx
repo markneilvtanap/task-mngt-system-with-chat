@@ -1,8 +1,12 @@
 import { Trash2, Brush } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
+import { useTaskStore } from "../store/useTaskStore";
+
 const TaskCard = ({ task }) => {
   const { allUsers } = useAuthStore();
+
+  const { deleteTask } = useTaskStore();
 
   const handleAssignName = (id) => {
     let name = "Unknown User";
@@ -16,6 +20,9 @@ const TaskCard = ({ task }) => {
       });
 
     return name;
+  };
+  const handleDelete = (id) => {
+    deleteTask(id);
   };
 
   return (
@@ -35,7 +42,10 @@ const TaskCard = ({ task }) => {
           <button className="btn btn-outline btn-primary">
             <Brush className="w-5 h-5" />
           </button>
-          <button className="btn btn-outline btn-error">
+          <button
+            className="btn btn-outline btn-error"
+            onClick={() => handleDelete(task._id)}
+          >
             <Trash2 className="w-5 h-5" />
           </button>
         </div>

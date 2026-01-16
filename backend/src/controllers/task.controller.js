@@ -25,12 +25,17 @@ export const createTask = async (req, res) => {
     });
 
     if (newTask) {
-      newTask.save();
+      await newTask.save();
+
+      console.log("New Task Created:", newTask);
       return res.status(201).json({
+        _id: newTask._id,
         title: newTask.title,
         description: newTask.description,
         assignedTo: newTask.assignedTo,
         status: newTask.status,
+        createdAt: newTask.createdAt,
+        createdBy: newTask.createdBy,
         message: "Created New Task.",
       });
     }
