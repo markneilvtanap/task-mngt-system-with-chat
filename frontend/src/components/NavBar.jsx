@@ -72,13 +72,16 @@ const NavBar = () => {
           //   </ul>
           // </div>
 
-          <details className="dropdown">
+          <details className="dropdown" id={"dropdown-menu"}>
             <summary className="btn m-1">
               <Menu />
             </summary>
             <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
               <li>
-                <a className="p-3" onClick={controlModal}>
+                <a
+                  className="p-3"
+                  onClick={() => controlModal("my_modal_create")}
+                >
                   Create Task
                 </a>
               </li>

@@ -2,14 +2,10 @@ import { useEffect, useState } from "react";
 import { useTaskStore } from "../store/useTaskStore";
 import { useAuthStore } from "../store/useAuthStore";
 
-const CreateTask = () => {
-  const { createTask, isCreatingTask } = useTaskStore();
+const EditTask = () => {
+  const { editTask, isEditingTask, editTaskID, tasks } = useTaskStore();
 
-  const { getAllUsers, allUsers } = useAuthStore();
-
-  useEffect(() => {
-    getAllUsers();
-  }, [getAllUsers]);
+  const { allUsers } = useAuthStore();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -17,6 +13,20 @@ const CreateTask = () => {
     status: "pending",
     assignedTo: "me",
   });
+
+  useEffect(() => {
+    if (!editTaskID || !tasks?.length) return;
+
+    const taskToEdit = tasks.find((t) => t._id === editTaskID);
+    if (!taskToEdit) return;
+
+    setFormData({
+      title: taskToEdit.title || "",
+      description: taskToEdit.description || "",
+      status: taskToEdit.status || "pending",
+      assignedTo: taskToEdit.assignedTo || "me",
+    });
+  }, [editTaskID, tasks]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,13 +38,25 @@ const CreateTask = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await createTask(formData);
+
+    editTask(editTaskID, formData);
+    resetForm();
+    document.getElementById("my_modal_edit").close();
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      description: "",
+      status: "pending",
+      assignedTo: "me",
+    });
   };
 
   return (
-    <dialog id="my_modal_create" className="modal modal-bottom sm:modal-middle">
+    <dialog id="my_modal_edit" className="modal modal-bottom sm:modal-middle">
       <div className="modal-box">
-        <h3 className="font-bold text-lg mb-4">Create Task</h3>
+        <h3 className="font-bold text-lg mb-4">Edit Task</h3>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -87,15 +109,15 @@ const CreateTask = () => {
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={isCreatingTask}
+              disabled={isEditingTask}
             >
-              {isCreatingTask ? "Creating..." : "Create"}
+              {isEditingTask ? "Editing..." : "Edit"}
             </button>
 
             <button
               type="button"
               className="btn"
-              onClick={() => document.getElementById("my_modal_create").close()}
+              onClick={() => document.getElementById("my_modal_edit").close()}
             >
               Cancel
             </button>
@@ -106,4 +128,4 @@ const CreateTask = () => {
   );
 };
 
-export default CreateTask;
+export default EditTask;

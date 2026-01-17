@@ -3,6 +3,7 @@ import { useTaskStore } from "../store/useTaskStore";
 import CreateTask from "../components/CreateTask";
 import TaskCard from "../components/TaskCard";
 import CountsTaskCards from "../components/CountsTaskCards";
+import EditTask from "../components/EditTask";
 
 const HomePage = () => {
   const { fetchAllTasks, tasks, isTaskLoading } = useTaskStore();
@@ -30,6 +31,7 @@ const HomePage = () => {
       )}
 
       <CreateTask />
+      <EditTask />
     </div>
   );
 };

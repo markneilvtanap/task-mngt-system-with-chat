@@ -6,25 +6,26 @@ export const useTaskStore = create((set, get) => ({
   tasks: [],
   isTaskLoading: false,
   isCreatingTask: false,
-
+  isEditingTask: false,
+  editTaskID: null,
   fetchAllTasks: async () => {
     set({ isTaskLoading: true });
-
+    const dropdown = document.getElementById("dropdown-menu");
     try {
       const res = await axiosInstance.get("/tasks");
       set({ tasks: res.data.tasks });
-
-      console.log("Fetched tasks:", res.data.tasks);
     } catch (error) {
       console.error("Error fetching all tasks:", error);
       toast.error("Failed to load tasks");
     } finally {
+      dropdown?.removeAttribute("open");
       set({ isTaskLoading: false });
     }
   },
 
   fetchSelfTasks: async () => {
     set({ isTaskLoading: true });
+    const dropdown = document.getElementById("dropdown-menu");
     try {
       const res = await axiosInstance.get("/tasks/created-by-me");
 
@@ -34,11 +35,13 @@ export const useTaskStore = create((set, get) => ({
       console.error("Error fetching self tasks:", error);
       toast.error("Failed to load self tasks");
     } finally {
+      dropdown?.removeAttribute("open");
       set({ isTaskLoading: false });
     }
   },
 
   fetchAssignedMeTasks: async () => {
+    const dropdown = document.getElementById("dropdown-menu");
     try {
       set({ isTaskLoading: true });
 
@@ -49,11 +52,13 @@ export const useTaskStore = create((set, get) => ({
       console.error("Error fetching Assiged to me tasks:", error);
       toast.error("Failed to load Assiged to me tasks");
     } finally {
+      dropdown?.removeAttribute("open");
       set({ isTaskLoading: false });
     }
   },
 
   fetchAssignedOthersfTasks: async () => {
+    const dropdown = document.getElementById("dropdown-menu");
     try {
       set({ isTaskLoading: true });
 
@@ -64,6 +69,7 @@ export const useTaskStore = create((set, get) => ({
       console.error("Error fetching Assiged to me tasks:", error);
       toast.error("Failed to load Assiged to me tasks");
     } finally {
+      dropdown?.removeAttribute("open");
       set({ isTaskLoading: false });
     }
   },
@@ -93,6 +99,31 @@ export const useTaskStore = create((set, get) => ({
     }
   },
 
+  editTask: async (taskID, updatedTaskData) => {
+    const prevTasks = get().tasks;
+
+    set({
+      isEditingTask: true,
+      tasks: prevTasks.map((task) =>
+        task._id === taskID ? { ...task, ...updatedTaskData } : task
+      ),
+    });
+
+    try {
+      await axiosInstance.put(`tasks/${taskID}`, updatedTaskData);
+      toast.success("Task edited successfully");
+    } catch (error) {
+      set({ tasks: prevTasks });
+      toast.error("Failed to edit task");
+    } finally {
+      set({ isEditingTask: false });
+    }
+  },
+
+  setEditTaskID: (editTaskID) => {
+    set({ editTaskID });
+  },
+
   deleteTask: async (taskId) => {
     set({ isTaskLoading: true });
     try {
@@ -110,8 +141,11 @@ export const useTaskStore = create((set, get) => ({
     }
   },
 
-  controlModal: () => {
-    const modal = document.getElementById("my_modal_5");
+  controlModal: (modalID) => {
+    const modal = document.getElementById(modalID);
+    const dropdown = document.getElementById("dropdown-menu");
+    dropdown?.removeAttribute("open");
+
     if (modal) {
       modal.showModal();
     } else {

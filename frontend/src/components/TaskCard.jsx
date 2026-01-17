@@ -6,7 +6,7 @@ import { useTaskStore } from "../store/useTaskStore";
 const TaskCard = ({ task }) => {
   const { allUsers } = useAuthStore();
 
-  const { deleteTask } = useTaskStore();
+  const { deleteTask, setEditTaskID, controlModal } = useTaskStore();
 
   const handleAssignName = (id) => {
     let name = "Unknown User";
@@ -21,8 +21,16 @@ const TaskCard = ({ task }) => {
 
     return name;
   };
+
   const handleDelete = (id) => {
     deleteTask(id);
+  };
+
+  const handleEdit = (editId, modalID) => {
+    setEditTaskID(editId);
+
+    console.log("Opening modal with ID:", modalID);
+    controlModal(modalID);
   };
 
   return (
@@ -39,7 +47,10 @@ const TaskCard = ({ task }) => {
             <div className="badge badge-secondary p-2">{task.status}</div>
           </button>
 
-          <button className="btn btn-outline btn-primary">
+          <button
+            className="btn btn-outline btn-primary"
+            onClick={() => handleEdit(task._id, "my_modal_edit")}
+          >
             <Brush className="w-5 h-5" />
           </button>
           <button
