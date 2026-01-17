@@ -8,6 +8,7 @@ export const useTaskStore = create((set, get) => ({
   isCreatingTask: false,
   isEditingTask: false,
   editTaskID: null,
+  dekteTaskID: null,
   fetchAllTasks: async () => {
     set({ isTaskLoading: true });
     const dropdown = document.getElementById("dropdown-menu");
@@ -122,6 +123,10 @@ export const useTaskStore = create((set, get) => ({
 
   setEditTaskID: (editTaskID) => {
     set({ editTaskID });
+  },
+
+  setDeleteTaskID: (deleteTaskID) => {
+    set({ deleteTaskID });
   },
 
   deleteTask: async (taskId) => {

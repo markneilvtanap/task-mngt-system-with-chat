@@ -2,11 +2,12 @@ import { Trash2, Brush } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
 import { useTaskStore } from "../store/useTaskStore";
+import DeleteConfirmCard from "./DeleteConfirmCard";
 
 const TaskCard = ({ task }) => {
   const { allUsers } = useAuthStore();
 
-  const { deleteTask, setEditTaskID, controlModal } = useTaskStore();
+  const { setDeleteTaskID, setEditTaskID, controlModal } = useTaskStore();
 
   const handleAssignName = (id) => {
     let name = "Unknown User";
@@ -23,13 +24,13 @@ const TaskCard = ({ task }) => {
   };
 
   const handleDelete = (id) => {
-    deleteTask(id);
+    document.getElementById("my_modal_delete").showModal();
+    setDeleteTaskID(id);
   };
 
   const handleEdit = (editId, modalID) => {
     setEditTaskID(editId);
 
-    console.log("Opening modal with ID:", modalID);
     controlModal(modalID);
   };
 
@@ -69,6 +70,8 @@ const TaskCard = ({ task }) => {
           Created: {formatMessageTime(task.createdAt)}
         </p>
       </div>
+
+      <DeleteConfirmCard />
     </div>
   );
 };

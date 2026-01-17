@@ -29,6 +29,7 @@ const CreateTask = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await createTask(formData);
+    document.getElementById("my_modal_create").close();
   };
 
   return (
