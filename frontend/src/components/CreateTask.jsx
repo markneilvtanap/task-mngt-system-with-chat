@@ -3,23 +3,42 @@ import { useTaskStore } from "../store/useTaskStore";
 import { useAuthStore } from "../store/useAuthStore";
 
 const CreateTask = () => {
-  const { createTask, isCreatingTask } = useTaskStore();
+  const { createTask, isCreatingTask, fetchAllTaskCounts } = useTaskStore();
 
-  const { getAllUsers, allUsers } = useAuthStore();
+  const { getAllUsers, allUsers, fetchMyID, myID } = useAuthStore();
 
-  useEffect(() => {
-    getAllUsers();
-  }, [getAllUsers]);
-
-  const [formData, setFormData] = useState({
+  const getInitialFormData = (myID) => ({
     title: "",
     description: "",
     status: "pending",
-    assignedTo: "me",
+    assignedTo: myID || "",
   });
+  useEffect(() => {
+    getAllUsers();
+    fetchMyID();
+  }, [getAllUsers, fetchMyID]);
+
+  const [formData, setFormData] = useState(getInitialFormData(myID));
+
+  // const [formData, setFormData] = useState({
+  //   title: "",
+  //   description: "",
+  //   status: "pending",
+  //   assignedTo: myID,
+  // });
+
+  useEffect(() => {
+    if (myID && !formData.assignedTo) {
+      setFormData((prev) => ({
+        ...prev,
+        assignedTo: myID,
+      }));
+    }
+  }, [myID]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -29,6 +48,8 @@ const CreateTask = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await createTask(formData);
+
+    setFormData(getInitialFormData(myID));
     document.getElementById("my_modal_create").close();
   };
 
@@ -74,7 +95,7 @@ const CreateTask = () => {
             value={formData.assignedTo}
             onChange={handleChange}
           >
-            <option value="me">Me</option>
+            <option value={myID}>Me</option>
 
             {Array.isArray(allUsers) &&
               allUsers.map((user) => (

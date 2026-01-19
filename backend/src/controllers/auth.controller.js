@@ -121,3 +121,7 @@ export const getAllUsers = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const getMyID = async (req, res) => {
+  res.status(200).json({ _id: req.user._id });
+};

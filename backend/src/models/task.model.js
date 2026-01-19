@@ -15,14 +15,14 @@ const taskSchema = new mongoose.Schema(
       required: true,
     },
     assignedTo: {
-      type: mongoose.Schema.Types.Mixed, // can be string ("me") or ObjectId
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      default: "me",
+      required: true,
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Task = mongoose.model("Task", taskSchema);

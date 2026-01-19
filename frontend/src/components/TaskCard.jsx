@@ -5,13 +5,14 @@ import { useTaskStore } from "../store/useTaskStore";
 import DeleteConfirmCard from "./DeleteConfirmCard";
 
 const TaskCard = ({ task }) => {
-  const { allUsers } = useAuthStore();
+  const { allUsers, myID } = useAuthStore();
 
   const { setDeleteTaskID, setEditTaskID, controlModal } = useTaskStore();
 
   const handleAssignName = (id) => {
     let name = "Unknown User";
-    if (id === "me") return "Me";
+
+    if (id === myID) return "Me";
 
     Array.isArray(allUsers) &&
       allUsers.map((user) => {

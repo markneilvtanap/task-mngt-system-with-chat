@@ -9,6 +9,10 @@ export const useTaskStore = create((set, get) => ({
   isEditingTask: false,
   editTaskID: null,
   dekteTaskID: null,
+  allTasksCount: 0,
+  selfTaskCount: 0,
+  assignedTaskMeCount: 0,
+  assignedToOthersCount: 0,
   fetchAllTasks: async () => {
     set({ isTaskLoading: true });
     const dropdown = document.getElementById("dropdown-menu");
@@ -20,7 +24,24 @@ export const useTaskStore = create((set, get) => ({
       toast.error("Failed to load tasks");
     } finally {
       dropdown?.removeAttribute("open");
+
       set({ isTaskLoading: false });
+    }
+  },
+
+  fetchAllTaskCounts: async () => {
+    try {
+      const res = await axiosInstance.get("/tasks/allTaskCounts");
+
+      set({
+        allTasksCount: res.data.allTasksCount,
+        assignedTaskMeCount: res.data.assignedTaskMeCount,
+        selfTaskCount: res.data.selfTaskCount,
+        assignedToOthersCount: res.data.assignedToOthersCount,
+      });
+    } catch (error) {
+      console.error("Error fetching all tasks counts:", error);
+      toast.error("Failed to load all tasks counts");
     }
   },
 
@@ -31,13 +52,12 @@ export const useTaskStore = create((set, get) => ({
       const res = await axiosInstance.get("/tasks/created-by-me");
 
       set({ tasks: res.data.selfTask });
-      // set({tasks : res.data})
     } catch (error) {
       console.error("Error fetching self tasks:", error);
       toast.error("Failed to load self tasks");
     } finally {
-      dropdown?.removeAttribute("open");
       set({ isTaskLoading: false });
+      dropdown?.removeAttribute("open");
     }
   },
 
@@ -76,17 +96,17 @@ export const useTaskStore = create((set, get) => ({
   },
 
   createTask: async (taskData) => {
-    const { tasks } = get();
+    const { tasks, fetchAllTaskCounts } = get();
     set({ isCreatingTask: true });
 
     try {
       const res = await axiosInstance.post("/tasks", taskData);
 
-      console.log("Task created:", res.data);
-
       set({
         tasks: [...tasks, res.data],
       });
+
+      fetchAllTaskCounts();
 
       toast.success("Task created successfully");
 
@@ -106,7 +126,7 @@ export const useTaskStore = create((set, get) => ({
     set({
       isEditingTask: true,
       tasks: prevTasks.map((task) =>
-        task._id === taskID ? { ...task, ...updatedTaskData } : task
+        task._id === taskID ? { ...task, ...updatedTaskData } : task,
       ),
     });
 
@@ -131,12 +151,16 @@ export const useTaskStore = create((set, get) => ({
 
   deleteTask: async (taskId) => {
     set({ isTaskLoading: true });
+
+    const { fetchAllTaskCounts } = get();
     try {
       const res = await axiosInstance.delete(`tasks/${taskId}`);
 
       set((state) => ({
         tasks: state.tasks.filter((task) => task._id !== taskId),
       }));
+
+      fetchAllTaskCounts();
       toast.success("Task deleted successfully");
     } catch (error) {
       console.error("Error deleting task:", error);

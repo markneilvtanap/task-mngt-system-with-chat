@@ -13,6 +13,7 @@ export const useAuthStore = create((set, get) => ({
   isUpdatingProfile: false,
   onlineUsers: [],
   allUsers: [],
+  myID: null,
   socket: null,
   checkAuth: async () => {
     try {
@@ -38,7 +39,7 @@ export const useAuthStore = create((set, get) => ({
       get().connectSocket();
     } catch (error) {
       toast.error(
-        error.response?.data?.message || "Error signing up. Please try again."
+        error.response?.data?.message || "Error signing up. Please try again.",
       );
     } finally {
       set({ isSigningUp: false });
@@ -67,7 +68,7 @@ export const useAuthStore = create((set, get) => ({
       // get().disconnectSocket();
     } catch (error) {
       toast.error(
-        error.response?.data?.message || "Error logging out. Please try again."
+        error.response?.data?.message || "Error logging out. Please try again.",
       );
     }
   },
@@ -93,6 +94,16 @@ export const useAuthStore = create((set, get) => ({
       set({ allUsers: res.data.filteredUsers });
     } catch (error) {
       console.error("Error fetching all users:", error);
+    }
+  },
+
+  fetchMyID: async () => {
+    try {
+      const res = await axiosInstance.get("/auth/my-id");
+
+      set({ myID: res.data._id });
+    } catch (error) {
+      console.error("Error fetching ID users:", error);
     }
   },
 

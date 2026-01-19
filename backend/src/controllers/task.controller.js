@@ -5,16 +5,22 @@ export const createTask = async (req, res) => {
   const { title, description, status, assignedTo } = req.body;
 
   try {
-    if (!title || !description) {
+    if (!title || !description || !assignedTo) {
       return res
         .status(400)
         .json({ message: "Please Fill the Required Fields" });
     }
 
-    const assigned =
-      assignedTo && mongoose.Types.ObjectId.isValid(assignedTo)
-        ? new mongoose.Types.ObjectId(assignedTo)
-        : "me";
+    // if (mongoose.Types.ObjectId.isValid(assignedTo)) {
+    //   return res.status(401).json({ message: "Invalid AssignedTo" });
+    // }
+
+    // const assigned =
+    //   assignedTo && mongoose.Types.ObjectId.isValid(assignedTo)
+    //     ? new mongoose.Types.ObjectId(assignedTo)
+    //     : "me";
+
+    const assigned = new mongoose.Types.ObjectId(assignedTo);
 
     const newTask = Task({
       title,
@@ -27,7 +33,6 @@ export const createTask = async (req, res) => {
     if (newTask) {
       await newTask.save();
 
-      console.log("New Task Created:", newTask);
       return res.status(201).json({
         _id: newTask._id,
         title: newTask.title,
@@ -110,6 +115,40 @@ export const getAllTask = async (req, res) => {
   }
 };
 
+export const getAllTaskCounts = async (req, res) => {
+  try {
+    const allTasksCount = await Task.countDocuments({
+      createdBy: req.user._id,
+    });
+    const assignedTaskMeCount = await Task.countDocuments({
+      $and: [
+        { createdBy: { $ne: req.user._id } },
+        { assignedTo: req.user._id },
+      ],
+    });
+
+    const selfTaskCount = await Task.countDocuments({
+      $and: [{ createdBy: req.user._id }, { assignedTo: req.user._id }],
+    });
+
+    const assignedToOthersCount = await Task.countDocuments({
+      $and: [
+        { createdBy: req.user._id },
+        { assignedTo: { $ne: req.user._id } },
+      ],
+    });
+
+    return res.status(200).json({
+      allTasksCount,
+      assignedTaskMeCount,
+      selfTaskCount,
+      assignedToOthersCount,
+    });
+  } catch (error) {
+    console.error(`Error Fetching All Task Counts ${error.message}`);
+    return res.status(500).json({ message: "Internal Server Error." });
+  }
+};
 export const getAssignedTask = async (req, res) => {
   const myID = req.user._id;
   try {

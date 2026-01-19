@@ -6,11 +6,13 @@ import CountsTaskCards from "../components/CountsTaskCards";
 import EditTask from "../components/EditTask";
 
 const HomePage = () => {
-  const { fetchAllTasks, tasks, isTaskLoading } = useTaskStore();
+  const { fetchAllTasks, tasks, isTaskLoading, fetchAllTaskCounts } =
+    useTaskStore();
 
   useEffect(() => {
     fetchAllTasks();
-  }, [fetchAllTasks]);
+    fetchAllTaskCounts();
+  }, [fetchAllTasks, fetchAllTaskCounts]);
 
   return (
     <div className="">

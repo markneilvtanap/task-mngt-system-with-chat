@@ -1,12 +1,18 @@
-import React from "react";
+import { useEffect } from "react";
 import { useTaskStore } from "../store/useTaskStore";
 
 const DeleteConfirmCard = () => {
   const { deleteTask, deleteTaskID } = useTaskStore();
+  const { fetchAllTaskCounts } = useTaskStore();
+
+  // useEffect(() => {
+  //   fetchAllTaskCounts();
+  // }, [fetchAllTaskCounts]);
 
   const handleDelete = () => {
     deleteTask(deleteTaskID);
   };
+
   return (
     <>
       <dialog id="my_modal_delete" className="modal">
