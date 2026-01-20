@@ -24,7 +24,7 @@ app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
-  })
+  }),
 );
 
 // routes
@@ -34,10 +34,18 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/connectMessage", connMessageRoutes);
 
 // production handling
-if (process.env.NODE_DEV === "production") {
+// if (process.env.NODE_DEV === "production") {
+//   app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+//   app.use((_, res) => {
+//     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+//   });
+// }
+
+if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-  app.use((_, res) => {
+  app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
   });
 }
