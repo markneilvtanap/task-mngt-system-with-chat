@@ -1,4 +1,4 @@
-import { Trash2, Brush } from "lucide-react";
+import { Trash2, Brush, MessageCircle } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
 import { useTaskStore } from "../store/useTaskStore";
@@ -9,17 +9,28 @@ const TaskCard = ({ task }) => {
 
   const { setDeleteTaskID, setEditTaskID, controlModal } = useTaskStore();
 
-  const handleAssignName = (id) => {
+  const handleAssignName = (assignedID, createdByID) => {
     let name = "Unknown User";
+    let assignerName = "";
+    if (assignedID === myID && createdByID !== myID) {
+      Array.isArray(allUsers) &&
+        allUsers.map((user) => {
+          if (user._id === createdByID) {
+            assignerName = user.fullName;
+          }
+        });
 
-    if (id === myID) return "Me";
-
-    Array.isArray(allUsers) &&
-      allUsers.map((user) => {
-        if (user._id === id) {
-          name = user.fullName;
-        }
-      });
+      return `Me by ${assignerName}`;
+    } else if (assignedID === myID && createdByID === myID) {
+      return "Self Task";
+    } else {
+      Array.isArray(allUsers) &&
+        allUsers.map((user) => {
+          if (user._id === assignedID) {
+            name = user.fullName;
+          }
+        });
+    }
 
     return name;
   };
@@ -35,14 +46,26 @@ const TaskCard = ({ task }) => {
     controlModal(modalID);
   };
 
+  const handleChatPopUp = () => {
+    console.log("hehe");
+  };
+
   return (
     <div className="card bg-base-100  shadow-xl mx-5 my-3 ">
       <div className="card-header flex justify-between p-5">
         <div className="card-title">Title: {task.title}</div>
 
         <div className="card-subtitle">
-          Assigned to: {handleAssignName(task.assignedTo)}
+          Assigned to: {handleAssignName(task.assignedTo, task.createdBy)}
         </div>
+        {task.assignedTo !== myID || task.createdBy !== myID ? (
+          <button
+            className="btn btn-outline btn-secondary"
+            onClick={() => handleChatPopUp()}
+          >
+            <MessageCircle className="w-5 h-5" />
+          </button>
+        ) : null}
         <div className="card-actions">
           <button className="btn ">
             Status
@@ -55,12 +78,14 @@ const TaskCard = ({ task }) => {
           >
             <Brush className="w-5 h-5" />
           </button>
-          <button
-            className="btn btn-outline btn-error"
-            onClick={() => handleDelete(task._id)}
-          >
-            <Trash2 className="w-5 h-5" />
-          </button>
+          {task.assignedTo === myID && task.createdBy !== myID ? null : (
+            <button
+              className="btn btn-outline btn-error"
+              onClick={() => handleDelete(task._id)}
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
+          )}
         </div>
       </div>
 

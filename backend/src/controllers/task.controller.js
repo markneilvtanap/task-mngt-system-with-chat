@@ -103,7 +103,7 @@ export const deleteTask = async (req, res) => {
 export const getAllTask = async (req, res) => {
   try {
     const tasks = await Task.find({
-      createdBy: req.user._id,
+      $or: [{ createdBy: req.user._id }, { assignedTo: req.user._id }],
     });
 
     if (tasks) {
@@ -118,7 +118,7 @@ export const getAllTask = async (req, res) => {
 export const getAllTaskCounts = async (req, res) => {
   try {
     const allTasksCount = await Task.countDocuments({
-      createdBy: req.user._id,
+      $or: [{ createdBy: req.user._id }, { assignedTo: req.user._id }],
     });
     const assignedTaskMeCount = await Task.countDocuments({
       $and: [
@@ -153,7 +153,7 @@ export const getAssignedTask = async (req, res) => {
   const myID = req.user._id;
   try {
     const myAssignedTask = await Task.find({
-      assignedTo: myID,
+      $and: [{ assignedTo: myID }, { createdBy: { $ne: myID } }],
     });
 
     if (myAssignedTask) {
@@ -170,7 +170,7 @@ export const getSelfTask = async (req, res) => {
 
   try {
     const selfTask = await Task.find({
-      $and: [{ createdBy: myID }, { assignedTo: "me" }],
+      $and: [{ createdBy: myID }, { assignedTo: myID }],
     });
 
     if (selfTask) {
@@ -186,7 +186,7 @@ export const getAssignedToOthersTask = async (req, res) => {
 
   try {
     const assignedToOthers = await Task.find({
-      $and: [{ createdBy: myID }, { assignedTo: { $ne: "me" } }],
+      $and: [{ createdBy: myID }, { assignedTo: { $ne: myID } }],
     });
 
     if (assignedToOthers) {
