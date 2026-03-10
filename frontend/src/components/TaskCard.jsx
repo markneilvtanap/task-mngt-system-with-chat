@@ -3,11 +3,15 @@ import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
 import { useTaskStore } from "../store/useTaskStore";
 import DeleteConfirmCard from "./DeleteConfirmCard";
+import ChatCardModal from "./ChatCardModal";
+import { useChatStore } from "../store/useChatStore";
 
 const TaskCard = ({ task }) => {
   const { allUsers, myID } = useAuthStore();
 
   const { setDeleteTaskID, setEditTaskID, controlModal } = useTaskStore();
+
+  const { setSelectedUser, setTaskForChat, toChatTask } = useChatStore();
 
   const handleAssignName = (assignedID, createdByID) => {
     let name = "Unknown User";
@@ -46,8 +50,16 @@ const TaskCard = ({ task }) => {
     controlModal(modalID);
   };
 
-  const handleChatPopUp = () => {
-    console.log("hehe");
+  const handleChatPopUp = (assignedTo, createdBy, task) => {
+    if (createdBy === myID) {
+      toChatTask(assignedTo);
+    } else {
+      toChatTask(createdBy);
+    }
+
+    setTaskForChat(task);
+
+    document.getElementById("chat-card-modal").showModal();
   };
 
   return (
@@ -61,7 +73,9 @@ const TaskCard = ({ task }) => {
         {task.assignedTo !== myID || task.createdBy !== myID ? (
           <button
             className="btn btn-outline btn-secondary"
-            onClick={() => handleChatPopUp()}
+            onClick={() =>
+              handleChatPopUp(task.assignedTo, task.createdBy, task)
+            }
           >
             <MessageCircle className="w-5 h-5" />
           </button>
@@ -97,6 +111,7 @@ const TaskCard = ({ task }) => {
         </p>
       </div>
 
+      <ChatCardModal />
       <DeleteConfirmCard />
     </div>
   );

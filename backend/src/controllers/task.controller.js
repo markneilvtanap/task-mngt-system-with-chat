@@ -1,8 +1,11 @@
 import mongoose from "mongoose";
 import Task from "../models/task.model.js";
+import ConnectionMessage from "../models/connection.model.js";
 
 export const createTask = async (req, res) => {
   const { title, description, status, assignedTo } = req.body;
+
+  const myID = req.user._id;
 
   try {
     if (!title || !description || !assignedTo) {
@@ -22,11 +25,21 @@ export const createTask = async (req, res) => {
 
     const assigned = new mongoose.Types.ObjectId(assignedTo);
 
+    if (assigned !== myID) {
+      const connection = ConnectionMessage({
+        requester: myID,
+        recipient: assigned,
+        status: "accepted",
+      });
+
+      await connection.save();
+    }
+
     const newTask = Task({
       title,
       description,
       status,
-      createdBy: req.user._id,
+      createdBy: myID,
       assignedTo: assigned,
     });
 

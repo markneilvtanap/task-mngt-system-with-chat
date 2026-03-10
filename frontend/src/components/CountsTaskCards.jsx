@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useTaskStore } from "../store/useTaskStore";
 
 const CountsTaskCards = () => {

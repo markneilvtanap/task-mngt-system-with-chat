@@ -18,22 +18,37 @@ export const getUsersForSideBar = async (req, res) => {
       $and: [{ requester: myID }, { status: "accepted" }],
     });
 
-    res.status(200).json(connectedUsers);
+    console.log("Connected Users: ", connectedUsers[0].recipient);
+
+    const toChatUser = await User.findById(connectedUsers[0].recipient).select(
+      "-password",
+    );
+
+    res.status(200).json(toChatUser);
   } catch (error) {
     console.error("Error in getUsersForSidebar: ", error.message);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
+export const getOneToOneChatUsers = async (req, res) => {
+  try {
+    const mID = req.user._id;
+    const { id: toChatId } = req.params;
+  } catch (error) {}
+};
+
 export const getMessages = async (req, res) => {
   try {
-    const { id: userToChatId } = req.params;
+    const { id: userToChatId, taskId: taskID } = req.params;
     const myId = req.user._id;
 
-    const messages = await Message.find({
+ 
+
+      const messages = await Message.find({
       $or: [
-        { senderId: myId, receiverId: userToChatId },
-        { senderId: userToChatId, receiverId: myId },
+        { senderId: myId, receiverId: userToChatId, taskId: taskID },
+        { senderId: userToChatId, receiverId: myId, taskId: taskID },
       ],
     });
 
@@ -47,7 +62,7 @@ export const getMessages = async (req, res) => {
 export const sendMessage = async (req, res) => {
   try {
     const { text, image } = req.body;
-    const { id: receiverId } = req.params;
+    const { senderId: receiverId, taskId } = req.params;
     const senderId = req.user._id;
 
     let imageUrl;
@@ -57,19 +72,26 @@ export const sendMessage = async (req, res) => {
       imageUrl = uploadResponse.secure_url;
     }
 
+    console.log("receiverId: ", receiverId);
+    console.log("senderId: ", senderId);
     // checking if accepted
     const isAcceptedChat = await ConnectionMessage.find({
       requester: senderId,
       recipient: receiverId,
     }).select("status");
 
+    console.log("isAcceptedChat: ", isAcceptedChat);
+
     if (isAcceptedChat[0].status === "accepted") {
       const newMessage = new Message({
         senderId,
         receiverId,
+        taskId,
         text,
         image: imageUrl,
       });
+
+      console.log("New Message: ", newMessage);
 
       await newMessage.save();
 

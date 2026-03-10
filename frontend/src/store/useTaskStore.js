@@ -13,6 +13,7 @@ export const useTaskStore = create((set, get) => ({
   selfTaskCount: 0,
   assignedTaskMeCount: 0,
   assignedToOthersCount: 0,
+
   fetchAllTasks: async () => {
     set({ isTaskLoading: true });
     const dropdown = document.getElementById("dropdown-menu");

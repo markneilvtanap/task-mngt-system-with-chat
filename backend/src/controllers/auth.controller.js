@@ -1,5 +1,6 @@
 import { createToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
+
 import bcrypt from "bcryptjs";
 
 export const signup = async (req, res) => {
@@ -124,4 +125,16 @@ export const getAllUsers = async (req, res) => {
 
 export const getMyID = async (req, res) => {
   res.status(200).json({ _id: req.user._id });
+};
+
+export const getMyData = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const myData = await User.findById(id).select("-password");
+
+    return res.status(200).json(myData);
+  } catch (error) {
+    console.error("Error fetching my data:", error);
+  }
 };
