@@ -9,14 +9,15 @@ import cookieParser from "cookie-parser";
 import { connectDB } from "./lib/db.js";
 import { io, app, server } from "./lib/socket.js";
 import cors from "cors";
+
 dotenv.config();
 
 const __dirname = path.resolve();
 const PORT = process.env.PORT;
 
 // middleware
-app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
 // CORS

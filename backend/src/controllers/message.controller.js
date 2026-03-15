@@ -70,8 +70,6 @@ export const sendMessage = async (req, res) => {
       imageUrl = uploadResponse.secure_url;
     }
 
-    console.log("taskID: ", taskId);
-    console.log("taskID type: ", typeof taskId);
     // checking if accepted
     const isAcceptedChat = await ConnectionMessage.find({
       requester: senderId,
@@ -91,16 +89,13 @@ export const sendMessage = async (req, res) => {
 
       const receiverSocketId = getReceiverSocketId(receiverId);
 
-
       if (receiverSocketId) {
         io.to(receiverSocketId).emit("newMessage", newMessage);
       }
 
-      
       if (senderId) {
         io.to(senderId).emit("newMessage", newMessage);
       }
-
 
       res.status(201).json(newMessage);
     }
