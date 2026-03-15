@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
-// import { io } from "socket.io-client";
+import { io } from "socket.io-client";
 
 const BASE_URL =
   import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
@@ -21,7 +21,7 @@ export const useAuthStore = create((set, get) => ({
 
       set({ authUser: res.data });
 
-      // get().connectSocket();
+      get().connectSocket();
     } catch (error) {
       console.log("Error checking auth:", error);
       set({ authUser: null });
@@ -65,7 +65,7 @@ export const useAuthStore = create((set, get) => ({
       await axiosInstance.post("/auth/logout");
       set({ authUser: null });
       toast.success("Logged out successfully!");
-      // get().disconnectSocket();
+      get().disconnectSocket();
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Error logging out. Please try again.",
@@ -107,22 +107,26 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // connectSocket: () => {
-  //   const { authUser } = get();
+  connectSocket: () => {
+    const { authUser } = get();
+    if (!authUser || get().socket?.connected) return;
 
-  //   if (!authUser || get().socket?.connected) return;
-  //   const socket = io(BASE_URL, {
-  //     query: { userId: authUser._id },
-  //   });
-  //   socket.connect();
+    const socket = io(BASE_URL, {
+      query: { userId: authUser._id },
+    });
+    socket.connect();
+    set({ socket });
+    console.log("Socket connected: ", socket);
+    socket.on("getOnlineUsers", (userIds) => {
+      set({ onlineUsers: userIds });
+    });
+  },
+  disconnectSocket: () => {
+    const socket = get().socket;
 
-  //   set({ socket });
-
-  //   socket.on("getOnlineUsers", (userIds) => {
-  //     set({ onlineUsers: userIds });
-  //   });
-  // },
-  // disconnectSocket: () => {
-  //   if (get().socket?.disconnected) get().socket.disconnect();
-  // },
+    if (socket?.connected) {
+      socket.disconnect();
+      set({ socket: null });
+    }
+  },
 }));

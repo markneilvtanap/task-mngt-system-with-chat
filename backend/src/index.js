@@ -7,9 +7,9 @@ import messageRoutes from "./routes/message.route.js";
 import connMessageRoutes from "./routes/connMessage.route.js";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./lib/db.js";
+import { io, app, server } from "./lib/socket.js";
 import cors from "cors";
 dotenv.config();
-const app = express();
 
 const __dirname = path.resolve();
 const PORT = process.env.PORT;
@@ -56,7 +56,7 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
   });
 }
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   connectDB();
   console.log("Server is running on port", PORT);
 });

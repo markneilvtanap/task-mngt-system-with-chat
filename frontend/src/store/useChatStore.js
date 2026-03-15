@@ -6,7 +6,7 @@ import { useAuthStore } from "./useAuthStore";
 export const useChatStore = create((set, get) => ({
   messages: [],
   users: [],
-  taskID: null,
+  task: null,
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
@@ -61,10 +61,16 @@ export const useChatStore = create((set, get) => ({
 
     const socket = useAuthStore.getState().socket;
 
+    socket.off("newMessage"); // remove previous listeners
+
     socket.on("newMessage", (newMessage) => {
-      const isMessageSentFromSelectedUser =
-        newMessage.senderId === selectedUser._id;
-      if (!isMessageSentFromSelectedUser) return;
+      const { selectedUser } = get();
+
+      const isChatMessage =
+        newMessage.senderId === selectedUser._id ||
+        newMessage.receiverId === selectedUser._id;
+
+      if (!isChatMessage) return;
 
       set({
         messages: [...get().messages, newMessage],

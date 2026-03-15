@@ -43,9 +43,7 @@ export const getMessages = async (req, res) => {
     const { id: userToChatId, taskId: taskID } = req.params;
     const myId = req.user._id;
 
- 
-
-      const messages = await Message.find({
+    const messages = await Message.find({
       $or: [
         { senderId: myId, receiverId: userToChatId, taskId: taskID },
         { senderId: userToChatId, receiverId: myId, taskId: taskID },
@@ -72,15 +70,13 @@ export const sendMessage = async (req, res) => {
       imageUrl = uploadResponse.secure_url;
     }
 
-    console.log("receiverId: ", receiverId);
-    console.log("senderId: ", senderId);
+    console.log("taskID: ", taskId);
+    console.log("taskID type: ", typeof taskId);
     // checking if accepted
     const isAcceptedChat = await ConnectionMessage.find({
       requester: senderId,
       recipient: receiverId,
     }).select("status");
-
-    console.log("isAcceptedChat: ", isAcceptedChat);
 
     if (isAcceptedChat[0].status === "accepted") {
       const newMessage = new Message({
@@ -91,14 +87,20 @@ export const sendMessage = async (req, res) => {
         image: imageUrl,
       });
 
-      console.log("New Message: ", newMessage);
-
       await newMessage.save();
 
-      // const receiverSocketId = getReceiverSocketId(receiverId);
-      // if (receiverSocketId) {
-      //   io.to(receiverSocketId).emit("newMessage", newMessage);
-      // }
+      const receiverSocketId = getReceiverSocketId(receiverId);
+
+
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("newMessage", newMessage);
+      }
+
+      
+      if (senderId) {
+        io.to(senderId).emit("newMessage", newMessage);
+      }
+
 
       res.status(201).json(newMessage);
     }
